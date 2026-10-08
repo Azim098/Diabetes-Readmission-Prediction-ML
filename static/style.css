@@ -1,0 +1,56 @@
+:root {
+    --bg: #f4f7fb;
+    --panel: #ffffff;
+    --text: #172033;
+    --muted: #667085;
+    --border: #e4e7ec;
+    --primary: #14532d;
+    --primary-dark: #0f3d21;
+    --soft: #ecfdf3;
+    --danger: #b42318;
+    --shadow: 0 16px 40px rgba(16, 24, 40, 0.08);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+.container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+.hero { background: linear-gradient(135deg, #123524, #1f6f43); color: white; padding: 42px 0; }
+.hero .container { display: flex; gap: 24px; align-items: flex-start; }
+.brand { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.14); font-weight: 800; letter-spacing: .08em; }
+.eyebrow { margin: 0 0 7px; font-size: 11px; font-weight: 800; letter-spacing: .12em; opacity: .72; }
+h1 { margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.05; }
+.hero-text { max-width: 720px; color: rgba(255,255,255,.82); line-height: 1.6; margin: 14px 0 0; }
+.main-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, .75fr); gap: 24px; padding: 30px 0 50px; align-items: start; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); padding: 26px; }
+.section-heading { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 22px; }
+h2 { margin: 0; font-size: 22px; }
+h3 { margin: 0 0 16px; font-size: 16px; }
+.badge { background: var(--soft); color: var(--primary); border-radius: 999px; padding: 8px 12px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.form-section { padding: 22px 0; border-top: 1px solid var(--border); }
+.form-section:first-of-type { border-top: 0; padding-top: 0; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.field { min-width: 0; }
+label { display: block; margin-bottom: 7px; text-transform: capitalize; color: #344054; font-size: 13px; font-weight: 700; }
+input, select { width: 100%; border: 1px solid #d0d5dd; border-radius: 10px; padding: 11px 12px; font: inherit; color: var(--text); background: #fff; outline: none; }
+input:focus, select:focus { border-color: #4cae74; box-shadow: 0 0 0 3px rgba(76,174,116,.14); }
+.predict-button { width: 100%; margin-top: 10px; border: 0; border-radius: 12px; padding: 14px 18px; background: var(--primary); color: white; font-weight: 800; font-size: 15px; cursor: pointer; }
+.predict-button:hover { background: var(--primary-dark); }
+.side-column { display: grid; gap: 20px; position: sticky; top: 20px; }
+.result-panel { background: linear-gradient(180deg, #ffffff, #f8fffb); }
+.prediction-pill { display: inline-block; margin: 16px 0; padding: 12px 18px; border-radius: 999px; background: var(--soft); color: var(--primary); font-size: 26px; font-weight: 900; }
+.result-text { color: var(--muted); line-height: 1.6; }
+.probability-block { margin-top: 15px; }
+.probability-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+.bar { height: 9px; background: #eaecf0; border-radius: 99px; overflow: hidden; }
+.bar-fill { height: 100%; background: #2f855a; border-radius: inherit; }
+.info-panel ol { padding-left: 20px; color: var(--muted); line-height: 1.8; }
+.metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.metric-grid div { background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+.metric-grid span { display: block; color: var(--muted); font-size: 11px; margin-bottom: 5px; }
+.metric-grid strong { font-size: 14px; }
+.disclaimer { color: var(--muted); font-size: 12px; line-height: 1.6; padding: 2px 4px; }
+.alert { border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; font-size: 13px; }
+.alert.error { background: #fef3f2; color: var(--danger); border: 1px solid #fecdca; }
+footer { padding: 24px 0; color: var(--muted); font-size: 12px; text-align: center; }
+@media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } .side-column { position: static; } }
+@media (max-width: 650px) { .form-grid { grid-template-columns: 1fr; } .hero .container { flex-direction: column; } .panel { padding: 20px; } }

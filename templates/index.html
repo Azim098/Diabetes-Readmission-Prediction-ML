@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Readmission Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="hero">
+    <div class="container">
+        <div class="brand">DRP</div>
+        <div>
+            <p class="eyebrow">MACHINE LEARNING HEALTHCARE PROJECT</p>
+            <h1>Diabetes Readmission Predictor</h1>
+            <p class="hero-text">Predict whether a diabetes patient is likely to be readmitted within 30 days, after 30 days, or not readmitted.</p>
+        </div>
+    </div>
+</header>
+
+<main class="container main-grid">
+    <section class="panel form-panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">PATIENT INPUT</p>
+                <h2>Enter encounter information</h2>
+            </div>
+            <span class="badge">{{ fields|length }} features</span>
+        </div>
+
+        {% if error %}
+        <div class="alert error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('predict') }}" id="prediction-form">
+            {% set sections = {
+                'Patient & Admission': ['race','gender','age','admission_type_id','discharge_disposition_id','admission_source_id'],
+                'Hospital Utilization': ['time_in_hospital','num_lab_procedures','num_procedures','num_medications','number_outpatient','number_emergency','number_inpatient','number_diagnoses'],
+                'Insurance & Specialty': ['payer_code','medical_specialty'],
+                'Diagnoses & Laboratory': ['diag_1','diag_2','diag_3','max_glu_serum','A1Cresult'],
+                'Diabetes Medication': ['metformin','repaglinide','nateglinide','chlorpropamide','glimepiride','acetohexamide','glipizide','glyburide','tolbutamide','pioglitazone','rosiglitazone','acarbose','miglitol','troglitazone','tolazamide','examide','citoglipton','insulin','glyburide-metformin','glipizide-metformin','glimepiride-pioglitazone','metformin-rosiglitazone','metformin-pioglitazone','change','diabetesMed']
+            } %}
+
+            {% for section_name, section_fields in sections.items() %}
+            <div class="form-section">
+                <h3>{{ section_name }}</h3>
+                <div class="form-grid">
+                    {% for field in fields if field.name in section_fields %}
+                    <div class="field">
+                        <label for="{{ field.name }}">{{ field.name.replace('_', ' ')|title }}</label>
+
+                        {% if field.type == 'number' %}
+                        <input
+                            id="{{ field.name }}"
+                            name="{{ field.name }}"
+                            type="number"
+                            min="{{ field.min }}"
+                            max="{{ field.max }}"
+                            value="{{ form_values.get(field.name, field.default) }}"
+                            required
+                        >
+                        {% elif field.widget == 'select' %}
+                        <select id="{{ field.name }}" name="{{ field.name }}" required>
+                            {% for option in field.options %}
+                            <option value="{{ option }}" {% if form_values.get(field.name, field.default) == option %}selected{% endif %}>{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                        {% else %}
+                        <input
+                            id="{{ field.name }}"
+                            name="{{ field.name }}"
+                            type="text"
+                            value="{{ form_values.get(field.name, field.default) }}"
+                            placeholder="{{ field.placeholder }}"
+                            required
+                        >
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <button class="predict-button" type="submit">Predict Readmission</button>
+        </form>
+    </section>
+
+    <aside class="side-column">
+        {% if prediction %}
+        <section class="panel result-panel">
+            <p class="eyebrow">MODEL RESULT</p>
+            <h2>Prediction</h2>
+            <div class="prediction-pill prediction-{{ prediction|replace('>','gt')|replace('<','lt')|replace(' ','') }}">
+                {{ prediction }}
+            </div>
+            <p class="result-text">
+                The model predicts the patient's readmission category as <strong>{{ prediction }}</strong>.
+            </p>
+
+            {% if probabilities %}
+            <h3>Prediction probabilities</h3>
+            {% for item in probabilities %}
+            <div class="probability-block">
+                <div class="probability-label">
+                    <span>{{ item.class }}</span>
+                    <strong>{{ item.probability }}%</strong>
+                </div>
+                <div class="bar"><div class="bar-fill" style="width: {{ item.probability }}%"></div></div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </section>
+        {% else %}
+        <section class="panel info-panel">
+            <p class="eyebrow">HOW IT WORKS</p>
+            <h2>From patient data to prediction</h2>
+            <ol>
+                <li>Enter the patient's encounter information.</li>
+                <li>Flask sends the data to the saved ML pipeline.</li>
+                <li>The pipeline applies the same preprocessing used during training.</li>
+                <li>The Gradient Boosting model returns the predicted class and probabilities.</li>
+            </ol>
+        </section>
+        {% endif %}
+
+        <section class="panel model-panel">
+            <p class="eyebrow">MODEL INFORMATION</p>
+            <h2>Current model</h2>
+            <div class="metric-grid">
+                <div><span>Algorithm</span><strong>Gradient Boosting</strong></div>
+                <div><span>Accuracy</span><strong>{{ '%.2f'|format(metrics.accuracy * 100) if metrics.accuracy is defined else '—' }}%</strong></div>
+                <div><span>Weighted F1</span><strong>{{ '%.2f'|format(metrics.f1_weighted * 100) if metrics.f1_weighted is defined else '—' }}%</strong></div>
+                <div><span>Selected features</span><strong>{{ metrics.selected_feature_count if metrics.selected_feature_count is defined else '30' }}</strong></div>
+            </div>
+        </section>
+
+        <section class="disclaimer">
+            <strong>Academic / research use only.</strong><br>
+            This application demonstrates a machine learning prediction workflow. It is not a medical diagnostic tool and should not replace professional clinical judgment.
+        </section>
+    </aside>
+</main>
+
+<footer>
+    <div class="container">Diabetes Readmission Prediction System · Flask · Scikit-learn</div>
+</footer>
+</body>
+</html>
